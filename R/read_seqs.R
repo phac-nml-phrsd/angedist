@@ -219,7 +219,8 @@ import_seqs <- function(path, prms) {
     strain.name = sname,
     date.collection = dc,
     location = loc,
-    accession.num = an
+    accession.num = an,
+    prms = prms
   )
 
   message(' done.')
