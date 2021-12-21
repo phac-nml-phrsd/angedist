@@ -12,7 +12,7 @@ get_accession_number(x, seq.source)
 \item{seq.source}{String. Source of sequencing data (e.g., GISAID).}
 }
 \value{
-String for the accesion/ID number
+String for the accession/ID number
 }
 \description{
 Retrieve the accession/ID number from the FASTA header.

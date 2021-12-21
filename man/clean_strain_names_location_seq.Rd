@@ -2,14 +2,18 @@
 % Please edit documentation in R/read_seqs.R
 \name{clean_strain_names_location_seq}
 \alias{clean_strain_names_location_seq}
-\title{Remove underscores and spaces from location of strain names
-A/Hong Kong/... ==> A/HongKong/...
-A/Hong_Kong/... ==> A/HongKong/...}
+\title{Clean strain name.}
 \usage{
 clean_strain_names_location_seq(x)
 }
+\arguments{
+\item{x}{String. The unprocessed strain name.}
+}
+\value{
+String. Processed strain name.
+}
 \description{
 Remove underscores and spaces from location of strain names
-A/Hong Kong/... ==> A/HongKong/...
-A/Hong_Kong/... ==> A/HongKong/...
+   A/Hong Kong/... ==> A/HongKong/...
+   A/Hong_Kong/... ==> A/HongKong/...
 }

@@ -1,7 +1,12 @@
 
-#' Remove underscores and spaces from location of strain names
-#' A/Hong Kong/... ==> A/HongKong/...
-#' A/Hong_Kong/... ==> A/HongKong/...
+#' @title Clean strain name.
+#' @description  Remove underscores and spaces from location of strain names
+#'    A/Hong Kong/... ==> A/HongKong/...
+#'    A/Hong_Kong/... ==> A/HongKong/...
+#'
+#' @param x String. The unprocessed strain name.
+#'
+#' @return String. Processed strain name.
 #'
 clean_strain_names_location_seq <- function(x) {
   # only one space:
@@ -34,33 +39,32 @@ pathogen_code <- function(p, seq.source) {
   res = NULL
 
   if(seq.source == 'GISAID'){
-    if(p == 'influenza') res = '^[AB]'
+    if(p == 'influenza') res = '[AB]'
     if(grepl('SARSCOV2',p))  res = 'hCoV-19'
-    # if(p == 'SARSCOV2spike')  res = 'Spike\\|hCoV-19'
+    if(p == 'SARSCOV2spike')  res = 'Spike|hCoV-19'
   }
   return(res)
 }
 
-get_strainname <- function(x) {
-
-  #TODO: FIXME
-
-
+get_strainname <- function(x, pathogen, seq.source) {
   if(0){
-    pathogen = 'SARSCOV2spike'
-    seq.source = 'GISAID'
-    x = h[3]
-    x
+    # pathogen = 'SARSCOV2spike'
+    # pathogen = 'influenza'
+    # seq.source = 'GISAID'
+    # x = h[3]
+    # x
   }
-  if(pathogen == 'SARSCOV2spike'){
-    x = stringr::str_remove(x, 'Spike\\|')
-  }
-
   pc  = pathogen_code(pathogen, seq.source)
-  a   = unlist(gregexpr(pc, text = x))
-  b   = unlist(gregexpr('|',text = x, fixed = TRUE))
-  res = substr(x = x, start=a[1], stop = min(b[(b>a[1])])-1)
-  res = unname(trimws(res))
+
+  # positions of the vertical bars
+  b = unlist(gregexpr('|',text = x, fixed = TRUE))
+
+  i = ifelse(pathogen =='SARSCOV2spike',2,1)
+  k = ifelse(pathogen =='SARSCOV2spike',8,2)
+  z = substr(x, start = k, stop = b[i])
+  z = stringr::str_remove_all(z, '\\|')
+
+  res = unname(trimws(z))
   res = clean_strain_names_location_seq(res)
 
   return(res)
@@ -121,10 +125,10 @@ get_collection_date <- function(seqs) {
 get_location <- function(x, pathogen, seq.source) {
 
   if(0){
-    x = sname[[1]]
-    pathogen = 'influenza'
-    pathogen = 'SARSCOV2spike'
-    seq.source = 'GISAID'
+    # x = sname[[1]]
+    # pathogen = 'influenza'
+    # pathogen = 'SARSCOV2spike'
+    # seq.source = 'GISAID'
   }
   pc  = pathogen_code(pathogen, seq.source)
 
@@ -173,7 +177,8 @@ import_seqs <- function(path, prms) {
       seq.type='AA',
       pathogen = 'SARSCOV2spike',
       seq.source = 'GISAID')
-    path = '~/Dropbox/tmp/angedist-tests/seqs/H3N2_filter_align_small.fasta'
+
+     path = '~/Dropbox/tmp/angedist-tests/seqs/H3N2_small.fasta'
     prms = list(
       seq.type='AA',
       pathogen = 'influenza',
@@ -192,7 +197,9 @@ import_seqs <- function(path, prms) {
   h = sapply(s, attr, 'Annot')
 
   # Full strain/virus name
-  sname = unname(sapply(h, get_strainname))
+  sname = unname(sapply(h, get_strainname,
+                        pathogen = prms$pathogen,
+                        seq.source = prms$seq.source))
 
   # Collection dates
   dc = get_collection_date(h)

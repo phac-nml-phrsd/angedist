@@ -7,7 +7,7 @@ Maintainer: The package maintainer <yourself@somewhere.net>
 Description: Calculate the genetic distance between genomes of pathogenes. 
     The genetic distance is informed by antigenic sites.
 License: MIT
-Imports: seqinr
+Imports: seqinr, lubridate, stringr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
