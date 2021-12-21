@@ -35,8 +35,8 @@ pathogen_code <- function(p, seq.source) {
 
   if(seq.source == 'GISAID'){
     if(p == 'influenza') res = '^[AB]'
-    if(p == 'SARSCOV2')  res = 'hCoV-19'
-    if(p == 'SARSCOV2spike')  res = 'Spike\\|hCoV-19'
+    if(grepl('SARSCOV2',p))  res = 'hCoV-19'
+    # if(p == 'SARSCOV2spike')  res = 'Spike\\|hCoV-19'
   }
   return(res)
 }
@@ -52,9 +52,12 @@ get_strainname <- function(x) {
     x = h[3]
     x
   }
+  if(pathogen == 'SARSCOV2spike'){
+    x = stringr::str_remove(x, 'Spike\\|')
+  }
 
   pc  = pathogen_code(pathogen, seq.source)
-  a   = unlist(gregexpr(pc, text = x, fixed = TRUE))
+  a   = unlist(gregexpr(pc, text = x))
   b   = unlist(gregexpr('|',text = x, fixed = TRUE))
   res = substr(x = x, start=a[1], stop = min(b[(b>a[1])])-1)
   res = unname(trimws(res))
