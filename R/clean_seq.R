@@ -26,7 +26,12 @@ filter_seq_length <- function(x, length.min, length.max, verbose=FALSE) {
   # Restore unchanged components:
   y = restore_unchanged(y, x)
 
-  if(verbose) message(paste('--> sequences removed because of length:',length(z)-sum(idx)))
+  if(verbose) {
+    message(paste('--> sequences removed because of length:',
+                  length(z)-sum(idx)))
+    print(x$strain.name[!idx])
+    }
+
   return(y)
 }
 
@@ -68,5 +73,70 @@ remove_lowquality_seqs <- function(x,
 }
 
 
+#' Filter sequences that have defined starting proteins.
+#'
+#' @param x List of sequences.
+#' @param subseq String. Sequence of characters that must start the sequence. For example \code{subseq='MK'} (not \code{c('M','K')}).
+#' @param verbose Logical. Display additional information about the filtering process.
+#'
+#' @return A list of sequences that all comply with the tolerance for missing/aberrant sata.
+#' @export
+#'
+filter_start_subseq<- function(x, subseq, verbose = FALSE) {
+  tmpfct <- function(z, subseq){
+    chk = z[1:nchar(subseq)] == unlist(strsplit(subseq, split=''))
+    return(all(chk))
+  }
+  keepidx <- sapply(x$seq, FUN=tmpfct, subseq=subseq)
+
+  y = lapply(x, '[', keepidx)
+  # Restore unchanged components:
+  y = restore_unchanged(y, x)
+
+  if(verbose){
+    message(paste('--> sequences removed because no',subseq,'start:',
+                  length(x$seq)-sum(keepidx)))
+    print(x$strain.name[!keepidx])
+  }
+
+  return(y)
+}
+
+#' Remive duplicated sequences.
+#'
+#'
+#' @param x List of sequences.
+#' @param verbose Logical. Display additional information about the filtering process.
+#'
+#' @return List of non-duplicated sequences.
+#' @export
+#'
+remove_duplicated <- function(x, verbose = FALSE) {
+
+  # x = res
+
+  v = x$strain.name
+  keepidx = !duplicated(v)
+
+  y = lapply(x, '[', keepidx)
+  # Restore unchanged components:
+  y = restore_unchanged(y, x)
+
+  # TODO: optional check that the sequences are indeed the same.
+  # (we only test on strain name at the moment)
+  # ii = which(idx.rm)
+  # v[ii]
+  # v[c( (ii-3) : (ii+3) )]
+  # d = which(v=="hCoV-19/USA/CT-Yale-011/2020")
+  # identical(x$seq[[d[1]]], x$seq[[d[2]]])
+  # mean(x$seq[[d[1]]] != x$seq[[d[2]]])
+
+  if(verbose){
+    message(paste('--> sequences removed because duplicated:',
+                  sum(!keepidx) ))
+    print(x$strain.name[!keepidx])
+  }
+  return(y)
+}
 
 
