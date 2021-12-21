@@ -171,19 +171,7 @@ get_accession_number <- function(x, seq.source) {
 #'
 import_seqs <- function(path, prms) {
 
-  if(0){ #DEBUG
-    path = '~/Dropbox/tmp/angedist-tests/seqs/hCOV-smallspike.fasta'
-    prms = list(
-      seq.type='AA',
-      pathogen = 'SARSCOV2spike',
-      seq.source = 'GISAID')
-
-     path = '~/Dropbox/tmp/angedist-tests/seqs/H3N2_small.fasta'
-    prms = list(
-      seq.type='AA',
-      pathogen = 'influenza',
-      seq.source = 'GISAID')
-  }
+  t1 = as.numeric(Sys.time())
 
   message(paste0('Reading genetic sequence at: ', path, ' ...'),
           appendLF = FALSE)
@@ -223,6 +211,9 @@ import_seqs <- function(path, prms) {
     prms = prms
   )
 
-  message(' done.')
+  t2 = as.numeric(Sys.time())
+  dt = round(t2-t1,1)
+  msg.t = paste0(' done (time = ',dt,' sec).')
+  message(msg.t)
   return(res)
 }
