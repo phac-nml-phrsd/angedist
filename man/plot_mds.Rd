@@ -4,13 +4,25 @@
 \alias{plot_mds}
 \title{Plot a MDS object}
 \usage{
-plot_mds(mdsobj, color_varname = NULL)
+plot_mds(
+  mdsobj,
+  color_varname = NULL,
+  highlight = FALSE,
+  highlight.label = FALSE
+)
 }
 \arguments{
 \item{mdsobj}{MDS object as returned by the function \code{angedist::mds()}.}
 
 \item{color_varname}{String. Name of the variable used for the color aesthetic.
 For no color, \code{color_varname = NULL} (default).}
+
+\item{highlight}{Logical. Highlight MDS points that are identified as being
+highlighted by defining them through a variable called \code{highlight}
+in the dataframe \code{mdsobj$df}.}
+
+\item{highlight.label}{Logical. Label highlighted MDS points with text defined
+by the variable \code{highlight.label} in the dataframe \code{mdsobj$df}.}
 }
 \value{
 a \code{ggplot2} object.

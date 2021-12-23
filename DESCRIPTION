@@ -7,7 +7,7 @@ Maintainer: The package maintainer <yourself@somewhere.net>
 Description: Calculate the genetic distance between genomes of pathogenes. 
     The genetic distance is informed by antigenic sites.
 License: MIT
-Imports: seqinr, lubridate, stringr, parallel, ggplot2
+Imports: seqinr, lubridate, stringr, parallel, ggplot2, ggrepel
 Depends: snowfall
 Encoding: UTF-8
 LazyData: true

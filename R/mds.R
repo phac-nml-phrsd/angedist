@@ -20,9 +20,8 @@ mds <- function(m, dim.mds, metavars = NULL, display.GOF = TRUE) {
   a = cmdscale(d = m, k = dim.mds, list. = TRUE)
 
   if(display.GOF){
-    message('MDS goodness-of-fit by dimensions:')
-    message(paste(paste0('MDSdim = ',1:dim.mds,' : ',round(a$GOF,5),'\n'),
-                  collapse = ''))
+    message(paste('MDS goodness-of-fit:', paste(round(a$GOF,5),
+                                                collapse = ';')))
   }
 
   mds.coord = data.frame(a$points)
@@ -45,7 +44,7 @@ mds <- function(m, dim.mds, metavars = NULL, display.GOF = TRUE) {
   )
 
   t2 = as.numeric(Sys.time())
-  dt = (t1-t2)/60
+  dt = round( (t2-t1)/60, 3)
   msg.t = paste0('MDS compute time: ',dt, 'm')
   message(msg.t)
   return(res)
@@ -57,17 +56,32 @@ mds <- function(m, dim.mds, metavars = NULL, display.GOF = TRUE) {
 #' @param mdsobj MDS object as returned by the function \code{angedist::mds()}.
 #' @param color_varname String. Name of the variable used for the color aesthetic.
 #' For no color, \code{color_varname = NULL} (default).
+#' @param highlight Logical. Highlight MDS points that are identified as being
+#' highlighted by defining them through a variable called \code{highlight}
+#' in the dataframe \code{mdsobj$df}.
+#' @param highlight.label Logical. Label highlighted MDS points with text defined
+#' by the variable \code{highlight.label} in the dataframe \code{mdsobj$df}.
 #'
 #' @return a \code{ggplot2} object.
 #' @export
 #'
 #' @import ggplot2
+#' @import ggrepel
 #'
-plot_mds <- function(mdsobj, color_varname = NULL) {
+plot_mds <- function(mdsobj,
+                     color_varname = NULL,
+                     highlight = FALSE,
+                     highlight.label = FALSE) {
 
-  # color_varname = 'date'
+  # highlight = 1
 
   df = mdsobj$df
+
+  if(highlight & (!'highlight' %in% names(df))){
+    warning('Warning: Cannot highlight MDS points because no `highlight` variable has been defined')
+    highlight = FALSE
+  }
+  df.highlight = filter(df, highlight==TRUE)
 
   g = NULL
 
@@ -80,6 +94,7 @@ plot_mds <- function(mdsobj, color_varname = NULL) {
 
   pt.sz = 3
   pt.alpha = .7
+  col.highlight = 'yellow'
 
   aes12 = aes_string(x='X1', y='X2', color = color_varname)
   aes13 = aes_string(x='X1', y='X3', color = color_varname)
@@ -87,21 +102,35 @@ plot_mds <- function(mdsobj, color_varname = NULL) {
 
   gp = geom_point(size = pt.sz, alpha = pt.alpha)
 
+  gp.h    = NULL
+  gp.hlab = NULL
+  if(highlight){
+    gp.h = geom_point(data = df.highlight,
+                              size = pt.sz+1,
+                              shape = 21,
+                              fill = col.highlight)
+  }
+
+  if(highlight.label){
+    gp.hlab = ggrepel::geom_label_repel(data = df.highlight,
+                                aes(label = highlight.label))
+  }
+
   lbs = labs(
     # x = 'antigenic dimension 1',
     # y = 'antigenic dimension 2',
-    title = 'MDS'
+    # title = 'MDS'
   )
 
   if(mdsobj$dim.mds == 2){
-    g = ggplot(df, aes12) + gp + th + lbs
+    g = ggplot(df, aes12) + gp + gp.h + gp.hlab + th + lbs
     # g
   }
   if(mdsobj$dim.mds == 3){
     tmp = list(
-    g12 = ggplot(df, aes12) + gp + th + lbs,
-    g13 = ggplot(df, aes13) + gp + th + lbs,
-    g23 = ggplot(df, aes23) + gp + th + lbs
+    g12 = ggplot(df, aes12) + gp + gp.h + gp.hlab + th + lbs,
+    g13 = ggplot(df, aes13) + gp + gp.h + gp.hlab + th + lbs,
+    g23 = ggplot(df, aes23) + gp + gp.h + gp.hlab + th + lbs
     )
     g = patchwork::wrap_plots(tmp, guides = 'collect')
   }
