@@ -76,18 +76,31 @@ remove_lowquality_seqs <- function(x,
 #' Filter sequences that have defined starting proteins.
 #'
 #' @param x List of sequences.
-#' @param subseq String. Sequence of characters that must start the sequence. For example \code{subseq='MK'} (not \code{c('M','K')}).
-#' @param verbose Logical. Display additional information about the filtering process.
+#' @param subseq String. Sequence of characters that must start the sequence.
+#' For example \code{subseq='MK'} (not \code{c('M','K')}).
+#' @param verbose Logical. Display additional information about
+#' the filtering process.
+#' @param position String. Position of the subsequence:
+#' \code{"start"} or \code{"end"}.
 #'
 #' @return A list of sequences that all comply with the tolerance for missing/aberrant sata.
 #' @export
 #'
-filter_start_subseq<- function(x, subseq, verbose = FALSE) {
-  tmpfct <- function(z, subseq){
-    chk = z[1:nchar(subseq)] == unlist(strsplit(subseq, split=''))
+filter_subseq<- function(x, subseq,
+                         position,
+                         verbose = FALSE) {
+
+  tmpfct <- function(z, subseq, position){
+     # z = x$seq[[1]]
+    nss = nchar(subseq)
+    if(position == 'start') idx = 1:nss
+    if(position == 'end') idx = ( (length(z)-nss+1):length(z) )
+
+    ssvec = unlist(strsplit(subseq, split=''))
+    chk = (z[idx] == ssvec)
     return(all(chk))
   }
-  keepidx <- sapply(x$seq, FUN=tmpfct, subseq=subseq)
+  keepidx <- sapply(x$seq, FUN=tmpfct, subseq=subseq, position=position)
 
   y = lapply(x, '[', keepidx)
   # Restore unchanged components:
@@ -98,12 +111,10 @@ filter_start_subseq<- function(x, subseq, verbose = FALSE) {
                   length(x$seq)-sum(keepidx)))
     print(x$strain.name[!keepidx])
   }
-
   return(y)
 }
 
-#' Remive duplicated sequences.
-#'
+#' @title Remove duplicated sequences.
 #'
 #' @param x List of sequences.
 #' @param verbose Logical. Display additional information about the filtering process.
@@ -140,3 +151,45 @@ remove_duplicated <- function(x, verbose = FALSE) {
 }
 
 
+
+
+#' @title Clean influenza A sequences
+#'
+#' @param seqs.obj List of sequences as returned from \code{import_seqs()}
+#' @param maxreltol Numeric. Maximum tolerance for the
+#' relative proportion of missing/aberrant proteins in any given sequence.
+#' Default = 0.005.
+#'
+#' @return A list of sequences cleaned according to influenza A specifications.
+#' @export
+#'
+clean_seq_influenza_A <- function(seqs.obj, maxreltol=0.005) {
+  res = seqs.obj %>%
+    filter_seq_length(565, 566) %>%
+    remove_lowquality_seqs(maxreltol = maxreltol) %>%
+    filter_subseq('M', position = 'start') %>%
+    filter_subseq('CI',position = 'end') %>%
+    remove_duplicated()
+    return(res)
+}
+
+
+#' Clean influenza B sequences
+#'
+#' @param seqs.obj List of sequences as returned from \code{import_seqs()}
+#' @param maxreltol Numeric. Maximum tolerance for the
+#' relative proportion of missing/aberrant proteins in any given sequence.
+#' Default = 0.005.
+#'
+#' @return A list of sequences cleaned according to influenza A specifications.
+#' @export
+#'
+clean_seq_influenza_B <- function(seqs.obj, maxreltol = 0.005) {
+  res = seqs.obj %>%
+    filter_seq_length(582, 587) %>%
+    remove_lowquality_seqs(maxreltol = maxreltol) %>%
+    filter_subseq('M', position = 'start') %>%
+    filter_subseq('CL',position = 'end') %>%
+    remove_duplicated()
+  return(res)
+}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/clean_seq.R
 \name{remove_duplicated}
 \alias{remove_duplicated}
-\title{Remive duplicated sequences.}
+\title{Remove duplicated sequences.}
 \usage{
 remove_duplicated(x, verbose = FALSE)
 }
@@ -15,5 +15,5 @@ remove_duplicated(x, verbose = FALSE)
 List of non-duplicated sequences.
 }
 \description{
-Remive duplicated sequences.
+Remove duplicated sequences.
 }
