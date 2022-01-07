@@ -79,7 +79,7 @@ dist_hamming_unit <- function(i,seqs, sites) {
 
 #' Distance matrix for multiple sequences.
 #'
-#' @param seqs List of sequences.
+#' @param sobj List of sequences object as returned by \code{import_seqs()}.
 #' @param sites List of integer vectors. Positions where the differences are calculated.
 #' For example,  \code{sites = list( c(1:5), c(300:900), 1234}.
 #' If \code{sites=NULL} (Default), then all sites are included in the distance calculation.
@@ -91,15 +91,18 @@ dist_hamming_unit <- function(i,seqs, sites) {
 #' @return A distance matrix.
 #' @export
 #'
-dist_matrix <- function(seqs, sites = NULL,
+dist_matrix <- function(sobj, sites = NULL,
                         ncores = 1,
                         dist.type = 'hamming') {
 
   t1 = as.numeric(Sys.time())
-  # Number of sequences
-  n <- length(seqs)
 
-  message(paste('Calculating pairwise',dist.type,'distance for',n,'sequences...'))
+  # Number of sequences
+  seqs = sobj$seq
+  n    = length(seqs)
+
+  message(paste('\nCalculating pairwise',dist.type,
+                'distance for',n,'sequences...'))
 
   # Set up parallel computation:
   NC = ifelse(ncores==0, parallel::detectCores(), ncores)
@@ -116,7 +119,7 @@ dist_matrix <- function(seqs, sites = NULL,
 
   if(dist.type == 'blosum')
     therows <- snowfall::sfLapply(x = 1:n,
-                        fun = dist_blosum_unit,
+                        fun = dist_blosum_unit,  # NOT IMPLEMENTED YET!
                         seqs = seqs)
 
   snowfall::sfStop()
@@ -124,8 +127,11 @@ dist_matrix <- function(seqs, sites = NULL,
   m <- matrix(data = unlist(therows),
               nrow = n, ncol=n, byrow = TRUE)
   # make the matrix symetric
-  # (input for `cmdscale()` must be symetric)
+  # (input for `cmdscale()` must be symmetric)
   m = m + t(m)
+
+  rownames(m) <- sobj$strain.name
+  colnames(m) <- sobj$strain.name
 
   t2 = as.numeric(Sys.time())
   dt = round((t2-t1)/60, 2)
