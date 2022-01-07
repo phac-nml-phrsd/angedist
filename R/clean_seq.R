@@ -163,13 +163,26 @@ remove_duplicated <- function(x, verbose = FALSE) {
 #' @return A list of sequences cleaned according to influenza A specifications.
 #' @export
 #'
-clean_seq_influenza_A <- function(seqs.obj, maxreltol=0.005) {
+clean_seq_influenza_A <- function(seqs.obj, maxreltol=0.005, verbose = FALSE) {
+
   res = seqs.obj %>%
-    filter_seq_length(565, 566) %>%
-    remove_lowquality_seqs(maxreltol = maxreltol) %>%
-    filter_subseq('M', position = 'start') %>%
-    filter_subseq('CI',position = 'end') %>%
-    remove_duplicated()
+    filter_seq_length(565, 566, verbose = verbose) %>%
+    remove_lowquality_seqs(maxreltol = maxreltol, verbose = verbose) %>%
+    filter_subseq('M', position = 'start', verbose = verbose) %>%
+    filter_subseq('CI',position = 'end', verbose = verbose) %>%
+    remove_duplicated(verbose = verbose)
+
+  n1 = length(seqs.obj$seq)
+  n2 = length(res$seq)
+
+  if(verbose){
+    msg = paste0(
+      'Cleaning of influenza A seqs completed: ',n1-n2,' seqs removed.\n',
+      'Number of seqs before clean : ',n1,'\n',
+      'Number of seqs after clean  : ',n2,'\n'
+    )
+    message(msg)
+  }
     return(res)
 }
 
@@ -184,12 +197,24 @@ clean_seq_influenza_A <- function(seqs.obj, maxreltol=0.005) {
 #' @return A list of sequences cleaned according to influenza A specifications.
 #' @export
 #'
-clean_seq_influenza_B <- function(seqs.obj, maxreltol = 0.005) {
+clean_seq_influenza_B <- function(seqs.obj, maxreltol = 0.005, verbose = FALSE) {
   res = seqs.obj %>%
-    filter_seq_length(582, 587) %>%
-    remove_lowquality_seqs(maxreltol = maxreltol) %>%
-    filter_subseq('M', position = 'start') %>%
-    filter_subseq('CL',position = 'end') %>%
-    remove_duplicated()
+    filter_seq_length(582, 587, verbose = verbose) %>%
+    remove_lowquality_seqs(maxreltol = maxreltol, verbose = verbose) %>%
+    filter_subseq('M', position = 'start', verbose = verbose) %>%
+    filter_subseq('CL',position = 'end', verbose = verbose) %>%
+    remove_duplicated(verbose = verbose)
+
+  n1 = length(seqs.obj$seq)
+  n2 = length(res$seq)
+
+  if(verbose){
+    msg = paste0(
+      'Cleaning of influenza B seqs completed: ',n1-n2,' seqs removed.\n',
+      'Number of seqs before clean : ',n1,'\n',
+      'Number of seqs after clean  : ',n2,'\n'
+    )
+    message(msg)
+  }
   return(res)
 }
