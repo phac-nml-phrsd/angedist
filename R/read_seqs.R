@@ -73,12 +73,30 @@ get_strainname <- function(x, pathogen, seq.source) {
 
 extract_collection_date <- function(s) {
 
+  # --- Exact date is known ---
+
   d = stringr::str_extract(
     string = s,
     pattern = "\\|\\d{0,2}\\/?\\d{2}\\/\\d{4}\\||\\|\\s*\\d{4}-\\d{2}-\\d{2}\\s*\\|")
 
   dd = gsub(pattern = '|', replacement = '', x = d, fixed=TRUE)
   dd =  trimws(dd)
+
+  # --- Unknown exact date ---
+
+  # For the unknown date, GISAID provide the year
+  idx.u = grepl('unknown', s)
+  u = s[idx.u]
+
+  # Retrieve the year
+  tmp = stringr::str_extract(u, '\\|\\s*\\d{4}.+[Uu]nknown\\)\\s+\\|')
+  tmp = stringr::str_extract(tmp, '\\d{4}')
+
+  # Choose middle of the year, arbitrarily
+  du = paste0(tmp,'-07-01')
+
+  # Overwrite when data was unknown:
+  dd[idx.u] <- du
 
   return(dd)
 }
