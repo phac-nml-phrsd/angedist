@@ -89,7 +89,7 @@ extract_collection_date <- function(s) {
   u = s[idx.u]
 
   # Retrieve the year
-  tmp = stringr::str_extract(u, '\\|\\s*\\d{4}.+[Uu]nknown\\)\\s+\\|')
+  tmp = stringr::str_extract(u, '\\|\\s*\\d{4}\\s+\\(Month and day unknown\\)\\s+\\|')
   tmp = stringr::str_extract(tmp, '\\d{4}')
 
   # Choose middle of the year, arbitrarily
@@ -103,14 +103,14 @@ extract_collection_date <- function(s) {
 
 #' Get the collection date from a FASTA header.
 #'
-#' @param seqs A character vector of FASTA headers.
+#' @param h A character vector of FASTA headers.
 #'
 #' @return A list of collection dates.
 #'
-get_collection_date <- function(seqs) {
+get_collection_date <- function(h) {
 
   # Dates in character format:
-  dc = extract_collection_date(seqs)
+  dc = extract_collection_date(h)
 
   # Check the date format by checking
   # the first two left-most digits.
@@ -124,7 +124,7 @@ get_collection_date <- function(seqs) {
 
   if(is.na(date.format)){
     warning('Unable to determine the date format of sequence collection date!')
-    d = rep(NA, length(seqs))
+    d = rep(NA, length(h))
   }
 
   # Convert to Date objects:
