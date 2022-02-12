@@ -91,7 +91,8 @@ dist_hamming_unit <- function(i,seqs, sites) {
 #' @return A distance matrix.
 #' @export
 #'
-dist_matrix <- function(sobj, sites = NULL,
+dist_matrix <- function(sobj,
+                        sites = NULL,
                         ncores = 1,
                         dist.type = 'hamming') {
 
@@ -119,8 +120,8 @@ dist_matrix <- function(sobj, sites = NULL,
 
   if(dist.type == 'blosum')
     therows <- snowfall::sfLapply(x = 1:n,
-                        fun = dist_blosum_unit,  # NOT IMPLEMENTED YET!
-                        seqs = seqs)
+                                  fun = dist_blosum_unit,  # NOT IMPLEMENTED YET!
+                                  seqs = seqs)
 
   snowfall::sfStop()
 
@@ -140,7 +141,48 @@ dist_matrix <- function(sobj, sites = NULL,
   return(m)
 }
 
+#' Locate the most frequent starting position
+#' of sub-sequence among multiple sequences.
+#'
+#' @param sobj Sequence object as returned by \code{import_seqs()}.
+#' @param subseq String. Sub-sequence to locate.
+#'
+#' @return The most frequent location.
+#' @export
+#'
+locate_postion <- function(sobj, subseq) {
 
+  # translate into string type:
+  s = lapply(sobj$seq, paste0, collapse='')
+  # locate position for al sequences:
+  a = unlist(gregexpr(subseq, s))
+
+  n.found = sum(a>0)
+  if(n.found ==0){
+    return(-1)
+  }
+
+  # only keep the sequences that have the sub-sequence:
+  p = a[a>0]
+
+  # if multiple positions, take the most frequent:
+  frq = as.matrix(table(p))
+  imax = which.max(frq)
+
+  res = as.numeric(rownames(frq)[imax])
+
+  if(imax>1){
+    fmax = frq[imax,1] / sum(frq[,1])
+    warning(paste0('Subsequence ',subseq,
+                   ' located at more than one position. ',
+                   'Using most frequent (freq=',
+                   round(fmax,4),
+                   ') position (pos=',
+                   res,').'))
+  }
+
+  return(res)
+}
 
 
 
