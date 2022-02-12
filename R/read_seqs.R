@@ -180,7 +180,9 @@ get_accession_number <- function(x, seq.source) {
 #' Read and import genetic sequences from files.
 #'
 #' @param path String. Path to the file storing the genetic sequences.
-#' @param prms List. Parameters for importation.
+#' @param prms List. Parameters for importation. Must specify \code{seq.source},
+#'  \code{pathogen}, \code{seq.type} (\code{AA} or \code{DNA}).
+#'
 #'
 #' @return A \code{SeqFastaXXX} object as defined by the package \code{seqinr}.
 #' @export

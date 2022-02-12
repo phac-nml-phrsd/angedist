@@ -4,7 +4,7 @@
 \alias{clean_seq_influenza_A}
 \title{Clean influenza A sequences}
 \usage{
-clean_seq_influenza_A(seqs.obj, maxreltol = 0.005)
+clean_seq_influenza_A(seqs.obj, maxreltol = 0.005, verbose = FALSE)
 }
 \arguments{
 \item{seqs.obj}{List of sequences as returned from \code{import_seqs()}}

@@ -9,7 +9,8 @@ import_seqs(path, prms)
 \arguments{
 \item{path}{String. Path to the file storing the genetic sequences.}
 
-\item{prms}{List. Parameters for importation.}
+\item{prms}{List. Parameters for importation. Must specify \code{seq.source},
+\code{pathogen}, \code{seq.type} (\code{AA} or \code{DNA}).}
 }
 \value{
 A \code{SeqFastaXXX} object as defined by the package \code{seqinr}.

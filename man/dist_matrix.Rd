@@ -4,10 +4,10 @@
 \alias{dist_matrix}
 \title{Distance matrix for multiple sequences.}
 \usage{
-dist_matrix(seqs, sites = NULL, ncores = 1, dist.type = "hamming")
+dist_matrix(sobj, sites = NULL, ncores = 1, dist.type = "hamming")
 }
 \arguments{
-\item{seqs}{List of sequences.}
+\item{sobj}{List of sequences object as returned by \code{import_seqs()}.}
 
 \item{sites}{List of integer vectors. Positions where the differences are calculated.
 For example,  \code{sites = list( c(1:5), c(300:900), 1234}.
