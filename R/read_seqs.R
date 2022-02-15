@@ -228,6 +228,7 @@ import_seqs <- function(path, prms) {
     date.collection = dc,
     location = loc,
     accession.num = an,
+    header = h,
     prms = prms
   )
 
