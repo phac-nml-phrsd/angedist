@@ -27,8 +27,10 @@ filter_seq_length <- function(x, length.min, length.max, verbose=FALSE) {
   y = restore_unchanged(y, x)
 
   if(verbose) {
-    message(paste('--> sequences removed because of length:',
-                  length(z)-sum(idx)))
+    msg = paste('--> sequences removed because of length:',
+                length(z)-sum(idx))
+    message(msg)
+    print(msg)
     print(x$strain.name[!idx])
     }
 
@@ -63,8 +65,10 @@ remove_lowquality_seqs <- function(x,
   y = restore_unchanged(y, x)
 
   if(verbose){
-    message(paste('--> sequences removed because of missing/aberrant:',
-                  length(x$seq)-sum(keepidx)))
+    msg = paste('--> sequences removed because of missing/aberrant:',
+                length(x$seq)-sum(keepidx))
+    message(msg)
+    print(msg)
     m = data.frame(name_removed = x$strain.name[!keepidx],
                    prop_unwanted = p[!keepidx])
     print(m)
@@ -107,8 +111,10 @@ filter_subseq<- function(x, subseq,
   y = restore_unchanged(y, x)
 
   if(verbose){
-    message(paste('--> sequences removed because no',subseq,'start:',
-                  length(x$seq)-sum(keepidx)))
+    msg = paste('--> sequences removed because no',subseq,'start:',
+                 length(x$seq)-sum(keepidx))
+    message(msg)
+    print(msg)
     print(x$strain.name[!keepidx])
   }
   return(y)
@@ -143,8 +149,10 @@ remove_duplicated <- function(x, verbose = FALSE) {
   # mean(x$seq[[d[1]]] != x$seq[[d[2]]])
 
   if(verbose){
-    message(paste('--> sequences removed because duplicated:',
-                  sum(!keepidx) ))
+    msg = paste('--> sequences removed because duplicated:',
+                sum(!keepidx) )
+    message(msg)
+    print(msg)
     print(x$strain.name[!keepidx])
   }
   return(y)
@@ -182,6 +190,7 @@ clean_seq_influenza_A <- function(seqs.obj, maxreltol=0.005, verbose = FALSE) {
       'Number of seqs after clean  : ',n2,'\n'
     )
     message(msg)
+    print(msg)
   }
     return(res)
 }
@@ -215,6 +224,7 @@ clean_seq_influenza_B <- function(seqs.obj, maxreltol = 0.005, verbose = FALSE) 
       'Number of seqs after clean  : ',n2,'\n'
     )
     message(msg)
+    print(msg)
   }
   return(res)
 }
