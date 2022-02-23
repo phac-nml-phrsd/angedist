@@ -45,7 +45,7 @@ subsample_date <- function(sobj,
     date.collection = sobj$date.collection[idx.subsmpl],
     location        = sobj$location[idx.subsmpl],
     accession.num   = sobj$accession.num[idx.subsmpl],
-    header          = sobj$header
+    header          = sobj$header[idx.subsmpl]
   )
   res = restore_unchanged(res, sobj)
 
