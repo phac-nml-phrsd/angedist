@@ -1,7 +1,7 @@
 Package: angedist
 Type: Package
 Title: Antigenic Genetic Distance
-Version: 0.2
+Version: 0.2.1
 Author: David Champredon
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: Calculate the genetic distance between genomes of pathogenes. 

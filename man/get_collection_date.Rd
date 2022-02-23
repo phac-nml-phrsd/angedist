@@ -4,10 +4,10 @@
 \alias{get_collection_date}
 \title{Get the collection date from a FASTA header.}
 \usage{
-get_collection_date(seqs)
+get_collection_date(h)
 }
 \arguments{
-\item{seqs}{A character vector of FASTA headers.}
+\item{h}{A character vector of FASTA headers.}
 }
 \value{
 A list of collection dates.
