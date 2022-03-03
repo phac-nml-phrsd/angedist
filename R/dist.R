@@ -194,9 +194,10 @@ dist_matrix <- function(sobj,
 
   if(dist.type == 'blosum')
     therows <- snowfall::sfLapply(
-      x = 1:n,
-      fun = dist_blosum_unit,
-      seqs = seqs
+      x     = 1:n,
+      fun   = dist_blosum_unit,
+      seqs  = seqs,
+      sites = sites
     )
 
   snowfall::sfStop()
