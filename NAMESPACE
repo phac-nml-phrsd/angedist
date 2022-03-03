@@ -2,6 +2,7 @@
 
 export(clean_seq_influenza_A)
 export(clean_seq_influenza_B)
+export(dist_blosum)
 export(dist_hamming)
 export(dist_matrix)
 export(filter_index)

@@ -38,13 +38,13 @@ dist_hamming <- function(x, y, sites) {
     res = sum(h)
   }
 
-  tmpfct <- function(i, h, sites) {
+  tmp_hamming <- function(i, h, sites) {
     return(h[ sites[[i]] ])
   }
 
   if(!is.null(sites)){
     # Differences at the selected sites:
-    dh  = lapply(1:ns, tmpfct, h=h, sites=sites)
+    dh  = lapply(1:ns, tmp_hamming, h=h, sites=sites)
     z   = sapply(dh, sum)
     res = sum(z)
   }
@@ -75,6 +75,80 @@ dist_hamming_unit <- function(i,seqs, sites) {
   return(a)
 }
 
+
+
+#' @title BLOSUM distance between two sequences.
+#'
+#' @description Calculate the genetic distance according to
+#' the BLOSUM metric. Here, only the BLOSUM80 is implemented.
+#' BLOSUM80 definition: https://www.ncbi.nlm.nih.gov/IEB/ToolBox/C_DOC/lxr/source/data/BLOSUM80
+#'
+#'
+#' @param x Character vector representing the amino acids sequence.
+#' @param y Character vector representing the amino acids sequence.
+#' @param logistic.scale Numeric. Scale parameter for the logistic function
+#' when converting similarity into a distance.
+#' Default \code{logistic.scale = 15}.
+#'
+#' @return Numeric. BLOSUM80 distance between \code{x} and \code{y}.
+#' @export
+#'
+#' @examples
+#' x = c('A','P','P','L','E','S')
+#' y = c('A','P','M','L','E','S')
+#' dist_blosum(x,y,  sites = list(c(1:2), 4:6))
+#' dist_blosum(x,y,  sites = NULL)
+
+dist_blosum <- function(x, y, sites = NULL,
+                        logistic.scale = 15) {
+
+  n  = length(x)
+
+  xx = x; yy=y
+  if(!is.null(sites)){
+    s = unlist(sites)
+    xx = x[s]
+    yy = y[s]
+  }
+
+  m  = blosum80[xx,yy]  # `blosum80` is defined in `blosum.R`
+  similarity.score = sum(diag(m)) / n
+
+  # the BLOSUM are log-odds similarities.
+  # Use logistic function to translate in distance:
+  d = 1 - plogis(q = -similarity.score, scale = logistic.scale)
+  return(d)
+}
+
+
+
+
+
+
+#' @title Helper function for parallel computing.
+#'
+#' @param i Integer. Iteration number.
+#' @param seqs List of sequences.
+#' @param logistic.scale Numeric. Scale parameter for the
+#' logistic function when converting similarity into a distance.
+#' @param sites List of integer vectors. Positions where the differences are calculated.
+#' For example,  \code{sites = list( c(1:5), c(300:900), 1234}.
+#' Default \code{logistic.scale = 15}.
+#' @return Numeric. BLOSUM distance.
+#'
+dist_blosum_unit <- function(i, seqs, sites,
+                             logistic.scale = 15) {
+
+  n = length(seqs)
+  a = numeric(length = n)
+
+  if(i==n) return(a)
+
+  for(j in c((i+1):n)){   # i=4
+    a[j] = dist_blosum(x = seqs[[i]], y = seqs[[j]], sites=sites )
+  }
+  return(a)
+}
 
 
 #' Distance matrix for multiple sequences.
@@ -119,9 +193,11 @@ dist_matrix <- function(sobj,
     )
 
   if(dist.type == 'blosum')
-    therows <- snowfall::sfLapply(x = 1:n,
-                                  fun = dist_blosum_unit,  # NOT IMPLEMENTED YET!
-                                  seqs = seqs)
+    therows <- snowfall::sfLapply(
+      x = 1:n,
+      fun = dist_blosum_unit,
+      seqs = seqs
+    )
 
   snowfall::sfStop()
 
