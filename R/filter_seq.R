@@ -28,14 +28,20 @@ filter_index <- function(sobj, idx) {
 #' @param loc String vector of pattern to be searched for the locations.
 #' If more than one location, will return all sequences that match any
 #' of the the location (logical "OR")
+#' @param except.strain.name String vector of strain name to exclude from the
+#' filtering. That means the sequences returned may not be all from the
+#' specified locations (if the exceptions are from other locations).
 #'
 #' @return A list of sequence objects.
 #' @export
 #'
-filter_location <- function(sobj, loc) {
+filter_location <- function(sobj, loc, except.strain.name=NULL) {
 
-  # loc = c('Ontario', 'Manitoba')
-  # loc = c('qwpqwpqwp')
+  if(0){  # --- DEBUG
+    loc = c('Ontario', 'Manitoba')
+    except.strain.name = c('A/Nagasaki/97/95',
+                           'A/Denmark/41/03')
+  }
 
   p = tolower(loc)
   q = tolower(sobj$location)
@@ -46,7 +52,29 @@ filter_location <- function(sobj, loc) {
   # return the indices where the locations were found:
   idx = which(grepl(pp, q))
 
+  # No locations found
   if(length(idx)==0) res = NULL
+
+
+  # Add sequences from the exception
+  if(!is.null(except.strain.name)){
+    xsn = tolower(except.strain.name)
+    sn  = tolower(sobj$strain.name)
+    idx.xsn = which(sn %in% xsn)
+
+    if(length(idx.xsn)==0){
+      warning(paste('None of the',length(except.strain.name),
+                    'strain name exceptions were found in `filter_location()`.'))
+    }
+    if(length(idx.xsn) < length(except.strain.name) & (length(idx.xsn)>0) ){
+      warning(paste('Only',length(idx.xsn),'of the',
+                    length(except.strain.name),
+                    'strain name exceptions were found in `filter_location()`.'))
+    }
+
+    # add to the filtered locations:
+    idx = c(idx, idx.xsn)
+  }
   if(length(idx)>0)  res = filter_index(sobj, idx)
 
   return(res)

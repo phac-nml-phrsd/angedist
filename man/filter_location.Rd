@@ -4,7 +4,7 @@
 \alias{filter_location}
 \title{Filter sequences based on the location name.}
 \usage{
-filter_location(sobj, loc)
+filter_location(sobj, loc, except.strain.name = NULL)
 }
 \arguments{
 \item{sobj}{List as returned by the function \code{import_seqs()}.}
@@ -12,6 +12,10 @@ filter_location(sobj, loc)
 \item{loc}{String vector of pattern to be searched for the locations.
 If more than one location, will return all sequences that match any
 of the the location (logical "OR")}
+
+\item{except.strain.name}{String vector of strain name to exclude from the
+filtering. That means the sequences returned may not be all from the
+specified locations (if the exceptions are from other locations).}
 }
 \value{
 A list of sequence objects.
