@@ -25,7 +25,7 @@ in the dataframe \code{mdsobj$df}.}
 by the variable \code{highlight.label} in the dataframe \code{mdsobj$df}.}
 }
 \value{
-a \code{ggplot2} object.
+A \code{ggplot2} object.
 }
 \description{
 Plot a MDS object

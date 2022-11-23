@@ -7,7 +7,7 @@
 mds(m, dim.mds, metavars = NULL, display.GOF = TRUE)
 }
 \arguments{
-\item{m}{Distance matrix.}
+\item{m}{Distance matrix as returned from the function \code{dist_matrix()}.}
 
 \item{dim.mds}{Dimension to project to.}
 }
