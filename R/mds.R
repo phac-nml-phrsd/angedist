@@ -1,6 +1,6 @@
 #' Multi-dimensional scaling
 #'
-#' @param m Distance matrix.
+#' @param m Distance matrix as returned from the function \code{dist_matrix()}.
 #' @param dim.mds Dimension to project to.
 #'
 #' @return Dataframe with MDS coordinates and associated meta-variables as additional columns.
@@ -10,9 +10,11 @@
 
 mds <- function(m, dim.mds, metavars = NULL, display.GOF = TRUE) {
 
-  if(0){
+  if(0){ # -- DEBUG
     dim.mds = 2
-    metavars = list(sname = x1$strain.name, datec = x1$date.collection)
+    metavars = NULL
+    metavars = list(sname = seqs.aligned$strain.name,
+                    datec = seqs.aligned$date.collection)
   }
 
   t1 = as.numeric(Sys.time())
@@ -20,8 +22,8 @@ mds <- function(m, dim.mds, metavars = NULL, display.GOF = TRUE) {
   a = cmdscale(d = m, k = dim.mds, list. = TRUE)
 
   if(display.GOF){
-    message(paste('MDS goodness-of-fit:', paste(round(a$GOF,5),
-                                                collapse = ';')))
+    message(paste('MDS goodness-of-fit:',
+                  paste(round(a$GOF,5), collapse = ';')))
   }
 
   mds.coord = data.frame(a$points)
@@ -38,15 +40,15 @@ mds <- function(m, dim.mds, metavars = NULL, display.GOF = TRUE) {
 
   res = list(
     dim.mds = dim.mds,
-    metavars.name = ifelse(is.null(metavars),NULL,names(metavars)),
+    metavars.name = ifelse(is.null(metavars),NA,names(metavars)),
     gof = a$GOF,
     df = mds.coord
   )
 
   t2 = as.numeric(Sys.time())
-  dt = round( (t2-t1)/60, 3)
-  msg.t = paste0('MDS compute time: ',dt, 'm')
-  message(msg.t)
+  dt = round( (t2-t1)/60, 1)
+  msg.t = paste0('MDS compute time: ',dt, ' min')
+  print(msg.t)
   return(res)
 }
 
@@ -62,7 +64,7 @@ mds <- function(m, dim.mds, metavars = NULL, display.GOF = TRUE) {
 #' @param highlight.label Logical. Label highlighted MDS points with text defined
 #' by the variable \code{highlight.label} in the dataframe \code{mdsobj$df}.
 #'
-#' @return a \code{ggplot2} object.
+#' @return A \code{ggplot2} object.
 #' @export
 #'
 #' @import ggplot2
